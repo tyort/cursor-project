@@ -1,0 +1,19 @@
+.catalog {
+  min-height: calc(100vh - 80px);
+  padding: 2rem 0;
+  background-color: #f5f5f5;
+}
+
+.catalog__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.catalog__title {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  color: #1976d2;
+}
+
