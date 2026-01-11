@@ -1,0 +1,8 @@
+.notification {
+  z-index: 9999;
+}
+
+.notification__alert {
+  min-width: 300px;
+}
+

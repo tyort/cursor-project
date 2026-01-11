@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useCart } from '../../contexts/CartContext';
 import './CartItem.css';
 
-export default function CartItem({ item }) {
+export default function CartItem({ item, onUpdateQuantity }) {
   const { removeFromCart, updateQuantity } = useCart();
 
   const formatPrice = (price) => {
@@ -21,11 +21,19 @@ export default function CartItem({ item }) {
   };
 
   const handleDecrease = () => {
-    updateQuantity(item.id, item.quantity - 1);
+    if (onUpdateQuantity) {
+      onUpdateQuantity(item.id, item.quantity - 1);
+    } else {
+      updateQuantity(item.id, item.quantity - 1);
+    }
   };
 
   const handleIncrease = () => {
-    updateQuantity(item.id, item.quantity + 1);
+    if (onUpdateQuantity) {
+      onUpdateQuantity(item.id, item.quantity + 1);
+    } else {
+      updateQuantity(item.id, item.quantity + 1);
+    }
   };
 
   // Используем цену со скидкой, если она есть, иначе обычную цену

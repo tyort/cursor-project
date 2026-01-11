@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import CartItem from '../CartItem/CartItem';
+import Notification from '../Notification/Notification';
 import './Cart.css';
 
 export default function Cart() {
-  const { cartItems, getTotalPrice } = useCart();
+  const { cartItems, getTotalPrice, updateQuantity } = useCart();
   const totalPrice = getTotalPrice();
+  const [notification, setNotification] = useState({ open: false, message: '' });
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -13,6 +15,21 @@ export default function Cart() {
       currency: 'RUB',
       minimumFractionDigits: 0
     }).format(price);
+  };
+
+  const handleUpdateQuantity = (itemId, newQuantity) => {
+    const result = updateQuantity(itemId, newQuantity);
+    
+    if (!result.success) {
+      setNotification({
+        open: true,
+        message: result.message
+      });
+    }
+  };
+
+  const handleCloseNotification = () => {
+    setNotification({ open: false, message: '' });
   };
 
   if (cartItems.length === 0) {
@@ -47,12 +64,22 @@ export default function Cart() {
             </thead>
             <tbody>
               {cartItems.map((item) => (
-                <CartItem key={item.id} item={item} />
+                <CartItem 
+                  key={item.id} 
+                  item={item} 
+                  onUpdateQuantity={handleUpdateQuantity}
+                />
               ))}
             </tbody>
           </table>
         </div>
       </div>
+      <Notification
+        open={notification.open}
+        message={notification.message}
+        severity="warning"
+        onClose={handleCloseNotification}
+      />
     </div>
   );
 }

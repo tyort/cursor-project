@@ -12,10 +12,18 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const MAX_QUANTITY_PER_PRODUCT = 2;
 
   const addToCart = (product) => {
+    const existingItem = cartItems.find((item) => item.id === product.id);
+    
+    // Проверяем лимит количества товара
+    if (existingItem && existingItem.quantity >= MAX_QUANTITY_PER_PRODUCT) {
+      return { success: false, message: `Достигнут лимит: можно добавить не более ${MAX_QUANTITY_PER_PRODUCT} шт. товара "${product.name}"` };
+    }
+    
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
+      const currentItem = prevItems.find((item) => item.id === product.id);
       
       // Вычисляем цену со скидкой
       const discount = product.discount || 0;
@@ -23,7 +31,7 @@ export const CartProvider = ({ children }) => {
         ? Math.round(product.price * (1 - discount / 100))
         : product.price;
       
-      if (existingItem) {
+      if (currentItem) {
         // Сохраняем оригинальную цену и цену со скидкой, если их ещё нет
         return prevItems.map((item) =>
           item.id === product.id
@@ -47,6 +55,8 @@ export const CartProvider = ({ children }) => {
         discountedPrice: discountedPrice
       }];
     });
+    
+    return { success: true };
   };
 
   const removeFromCart = (productId) => {
@@ -56,7 +66,16 @@ export const CartProvider = ({ children }) => {
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
-      return;
+      return { success: true };
+    }
+    
+    // Проверяем лимит количества товара
+    if (newQuantity > MAX_QUANTITY_PER_PRODUCT) {
+      const item = cartItems.find((item) => item.id === productId);
+      return { 
+        success: false, 
+        message: `Достигнут лимит: можно добавить не более ${MAX_QUANTITY_PER_PRODUCT} шт. товара "${item?.name || ''}"` 
+      };
     }
     
     setCartItems((prevItems) =>
@@ -66,6 +85,8 @@ export const CartProvider = ({ children }) => {
           : item
       )
     );
+    
+    return { success: true };
   };
 
   const getTotalItems = () => {
@@ -91,6 +112,7 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         getTotalItems,
         getTotalPrice,
+        MAX_QUANTITY_PER_PRODUCT,
       }}
     >
       {children}
