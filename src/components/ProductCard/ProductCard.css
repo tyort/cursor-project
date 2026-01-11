@@ -48,6 +48,13 @@
   line-height: 1.4;
 }
 
+.product-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
 .product-card__price-container {
   display: flex;
   flex-direction: column;
@@ -81,7 +88,6 @@
 }
 
 .product-card__button {
-  margin-top: auto;
   padding: 12px 24px;
   background: #1976d2;
   color: white;

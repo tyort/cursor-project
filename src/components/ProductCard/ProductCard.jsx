@@ -33,21 +33,23 @@ export default function ProductCard({ product, onAddToCart }) {
       </div>
       <div className="product-card__content">
         <h3 className="product-card__name">{product.name}</h3>
-        <div className="product-card__price-container">
-          {discount > 0 && (
-            <>
-              <p className="product-card__price-old">{formatPrice(product.price)}</p>
-              <span className="product-card__discount-badge">-{discount}%</span>
-            </>
-          )}
-          <p className="product-card__price">{formatPrice(discountedPrice)}</p>
+        <div className="product-card__footer">
+          <div className="product-card__price-container">
+            {discount > 0 && (
+              <>
+                <p className="product-card__price-old">{formatPrice(product.price)}</p>
+                <span className="product-card__discount-badge">-{discount}%</span>
+              </>
+            )}
+            <p className="product-card__price">{formatPrice(discountedPrice)}</p>
+          </div>
+          <button 
+            className="product-card__button"
+            onClick={handleAddToCart}
+          >
+            Добавить в корзину
+          </button>
         </div>
-        <button 
-          className="product-card__button"
-          onClick={handleAddToCart}
-        >
-          Добавить в корзину
-        </button>
       </div>
     </div>
   );
