@@ -24,6 +24,23 @@
   color: #666;
 }
 
+.cart-item__price-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-item__price-old {
+  font-size: 0.875rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.cart-item__price-new {
+  font-weight: 600;
+  color: #2e7d32;
+}
+
 .cart-item__quantity-controls {
   display: flex;
   align-items: center;

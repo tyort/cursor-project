@@ -16,6 +16,12 @@ export default function ProductCard({ product, onAddToCart }) {
     }).format(price);
   };
 
+  // Вычисляем цену со скидкой
+  const discount = product.discount || 0;
+  const discountedPrice = discount > 0 
+    ? Math.round(product.price * (1 - discount / 100))
+    : product.price;
+
   return (
     <div className="product-card">
       <div className="product-card__image-container">
@@ -27,7 +33,15 @@ export default function ProductCard({ product, onAddToCart }) {
       </div>
       <div className="product-card__content">
         <h3 className="product-card__name">{product.name}</h3>
-        <p className="product-card__price">{formatPrice(product.price)}</p>
+        <div className="product-card__price-container">
+          {discount > 0 && (
+            <>
+              <p className="product-card__price-old">{formatPrice(product.price)}</p>
+              <span className="product-card__discount-badge">-{discount}%</span>
+            </>
+          )}
+          <p className="product-card__price">{formatPrice(discountedPrice)}</p>
+        </div>
         <button 
           className="product-card__button"
           onClick={handleAddToCart}

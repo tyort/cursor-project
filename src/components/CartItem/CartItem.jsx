@@ -28,12 +28,25 @@ export default function CartItem({ item }) {
     updateQuantity(item.id, item.quantity + 1);
   };
 
-  const total = item.price * item.quantity;
+  // Используем цену со скидкой, если она есть, иначе обычную цену
+  const itemPrice = item.discountedPrice !== undefined 
+    ? item.discountedPrice 
+    : (item.originalPrice || item.price);
+  const total = itemPrice * item.quantity;
 
   return (
     <tr className="cart-item">
       <td className="cart-item__name">{item.name}</td>
-      <td className="cart-item__price">{formatPrice(item.price)}</td>
+      <td className="cart-item__price">
+        {item.discountedPrice !== undefined && item.discountedPrice !== item.originalPrice ? (
+          <div className="cart-item__price-container">
+            <span className="cart-item__price-old">{formatPrice(item.originalPrice || item.price)}</span>
+            <span className="cart-item__price-new">{formatPrice(itemPrice)}</span>
+          </div>
+        ) : (
+          <span>{formatPrice(itemPrice)}</span>
+        )}
+      </td>
       <td className="cart-item__quantity">
         <div className="cart-item__quantity-controls">
           <button

@@ -48,11 +48,36 @@
   line-height: 1.4;
 }
 
+.product-card__price-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .product-card__price {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
   color: #2e7d32;
+}
+
+.product-card__price-old {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.product-card__discount-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #f44336;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  align-self: flex-start;
 }
 
 .product-card__button {

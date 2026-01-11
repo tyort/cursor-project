@@ -17,15 +17,35 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
       
+      // Вычисляем цену со скидкой
+      const discount = product.discount || 0;
+      const discountedPrice = discount > 0 
+        ? Math.round(product.price * (1 - discount / 100))
+        : product.price;
+      
       if (existingItem) {
+        // Сохраняем оригинальную цену и цену со скидкой, если их ещё нет
         return prevItems.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { 
+                ...item, 
+                quantity: item.quantity + 1,
+                originalPrice: item.originalPrice || product.price,
+                discountedPrice: item.discountedPrice !== undefined 
+                  ? item.discountedPrice 
+                  : discountedPrice
+              }
             : item
         );
       }
       
-      return [...prevItems, { ...product, quantity: 1 }];
+      // Сохраняем оригинальную цену и цену со скидкой
+      return [...prevItems, { 
+        ...product, 
+        quantity: 1,
+        originalPrice: product.price,
+        discountedPrice: discountedPrice
+      }];
     });
   };
 
@@ -53,7 +73,13 @@ export const CartProvider = ({ children }) => {
   };
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce((total, item) => {
+      // Используем цену со скидкой, если она есть, иначе обычную цену
+      const itemPrice = item.discountedPrice !== undefined 
+        ? item.discountedPrice 
+        : (item.originalPrice || item.price);
+      return total + itemPrice * item.quantity;
+    }, 0);
   };
 
   return (
