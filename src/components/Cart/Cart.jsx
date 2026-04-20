@@ -5,9 +5,19 @@ import Notification from '../Notification/Notification';
 import './Cart.css';
 
 export default function Cart() {
-  const { cartItems, getTotalPrice, updateQuantity } = useCart();
+  const { 
+    cartItems, 
+    getTotalPrice, 
+    getSubtotal,
+    updateQuantity, 
+    applyPromoCode,
+    isPromoApplied 
+  } = useCart();
   const totalPrice = getTotalPrice();
+  const subtotal = getSubtotal();
   const [notification, setNotification] = useState({ open: false, message: '' });
+  const [promoCode, setPromoCode] = useState('');
+  const [promoError, setPromoError] = useState('');
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -32,6 +42,22 @@ export default function Cart() {
     setNotification({ open: false, message: '' });
   };
 
+  const handleApplyPromoCode = () => {
+    setPromoError('');
+    const result = applyPromoCode(promoCode);
+    
+    if (!result.success) {
+      setPromoError(result.message);
+    }
+  };
+
+  const handlePromoCodeChange = (e) => {
+    setPromoCode(e.target.value);
+    if (promoError) {
+      setPromoError('');
+    }
+  };
+
   if (cartItems.length === 0) {
     return (
       <div className="cart">
@@ -47,9 +73,42 @@ export default function Cart() {
     <div className="cart">
       <div className="cart__container">
         <h2 className="cart__title">Корзина</h2>
+        <div className="cart__promo-section">
+          <div className="cart__promo-input-group">
+            <input
+              type="text"
+              className="cart__promo-input"
+              placeholder="Введите промокод"
+              value={promoCode}
+              onChange={handlePromoCodeChange}
+              disabled={isPromoApplied}
+            />
+            <button
+              className="cart__promo-button"
+              onClick={handleApplyPromoCode}
+              disabled={isPromoApplied || !promoCode.trim()}
+            >
+              Применить
+            </button>
+          </div>
+          {promoError && (
+            <p className="cart__promo-error">{promoError}</p>
+          )}
+          {isPromoApplied && (
+            <p className="cart__promo-success">Промокод применен! Скидка 15%</p>
+          )}
+        </div>
         <div className="cart__total">
-          <span className="cart__total-label">Общая стоимость:</span>
-          <span className="cart__total-price">{formatPrice(totalPrice)}</span>
+          {isPromoApplied && (
+            <div className="cart__total-row">
+              <span className="cart__total-label">Сумма до скидки:</span>
+              <span className="cart__total-price-old">{formatPrice(subtotal)}</span>
+            </div>
+          )}
+          <div className="cart__total-row">
+            <span className="cart__total-label">Общая стоимость:</span>
+            <span className="cart__total-price">{formatPrice(totalPrice)}</span>
+          </div>
         </div>
         <div className="cart__table-wrapper">
           <table className="cart__table">

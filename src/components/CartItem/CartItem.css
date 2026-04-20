@@ -48,6 +48,11 @@
   justify-content: center;
 }
 
+.cart-item__quantity {
+  text-align: center;
+  width: 180px;
+}
+
 .cart-item__quantity-button {
   display: flex;
   align-items: center;

@@ -12,7 +12,10 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [isPromoApplied, setIsPromoApplied] = useState(false);
   const MAX_QUANTITY_PER_PRODUCT = 2;
+  const PROMO_CODE = 'Кекс';
+  const PROMO_DISCOUNT = 15;
 
   const addToCart = (product) => {
     const existingItem = cartItems.find((item) => item.id === product.id);
@@ -94,13 +97,44 @@ export const CartProvider = ({ children }) => {
   };
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => {
+    const subtotal = cartItems.reduce((total, item) => {
       // Используем цену со скидкой, если она есть, иначе обычную цену
       const itemPrice = item.discountedPrice !== undefined 
         ? item.discountedPrice 
         : (item.originalPrice || item.price);
       return total + itemPrice * item.quantity;
     }, 0);
+    
+    // Применяем скидку промокода, если промокод применен
+    if (isPromoApplied) {
+      return Math.round(subtotal * (1 - PROMO_DISCOUNT / 100));
+    }
+    
+    return subtotal;
+  };
+
+  const getSubtotal = () => {
+    return cartItems.reduce((total, item) => {
+      const itemPrice = item.discountedPrice !== undefined 
+        ? item.discountedPrice 
+        : (item.originalPrice || item.price);
+      return total + itemPrice * item.quantity;
+    }, 0);
+  };
+
+  const applyPromoCode = (code) => {
+    // Проверяем, не применен ли уже промокод
+    if (isPromoApplied) {
+      return { success: false, message: 'Промокод уже применен' };
+    }
+    
+    // Проверяем правильность промокода
+    if (code.trim() !== PROMO_CODE) {
+      return { success: false, message: 'Неверный промокод' };
+    }
+    
+    setIsPromoApplied(true);
+    return { success: true };
   };
 
   return (
@@ -112,6 +146,9 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         getTotalItems,
         getTotalPrice,
+        getSubtotal,
+        applyPromoCode,
+        isPromoApplied,
         MAX_QUANTITY_PER_PRODUCT,
       }}
     >
