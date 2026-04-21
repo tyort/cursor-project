@@ -146,6 +146,7 @@
 .cart__table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .cart__table-header {
@@ -167,7 +168,31 @@
 
 .cart__table-header:nth-child(3) {
   text-align: center;
-  width: 180px;
+}
+
+.cart__table th:nth-child(1),
+.cart__table td:nth-child(1) {
+  width: 34%;
+}
+
+.cart__table th:nth-child(2),
+.cart__table td:nth-child(2) {
+  width: 18%;
+}
+
+.cart__table th:nth-child(3),
+.cart__table td:nth-child(3) {
+  width: 18%;
+}
+
+.cart__table th:nth-child(4),
+.cart__table td:nth-child(4) {
+  width: 18%;
+}
+
+.cart__table th:nth-child(5),
+.cart__table td:nth-child(5) {
+  width: 12%;
 }
 
 @media (max-width: 768px) {
