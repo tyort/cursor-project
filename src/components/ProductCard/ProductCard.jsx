@@ -1,7 +1,7 @@
 import React from 'react';
 import './ProductCard.css';
 
-export default function ProductCard({ product, onAddToCart }) {
+export function ProductCard({ product, onAddToCart }) {
   const handleAddToCart = () => {
     if (onAddToCart) {
       onAddToCart(product);

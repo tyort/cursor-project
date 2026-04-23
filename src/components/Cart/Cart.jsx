@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
-import CartItem from '../CartItem/CartItem';
-import Notification from '../Notification/Notification';
+import { CartItem } from '../CartItem/CartItem';
+import { Notification } from '../Notification/Notification';
 import './Cart.css';
 
-export default function Cart() {
+export function Cart() {
   const { 
     cartItems, 
     getTotalPrice, 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
-import Header from './components/Header/Header';
-import Catalog from './pages/Catalog/Catalog';
-import Cart from './components/Cart/Cart';
+import { Header } from './components/Header/Header';
+import { Catalog } from './pages/Catalog/Catalog';
+import { Cart } from './components/Cart/Cart';
 import './App.css';
 
-export default function App() {
+export function App() {
   return (
     <CartProvider>
       <Router>

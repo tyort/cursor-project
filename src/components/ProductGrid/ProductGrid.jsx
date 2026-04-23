@@ -1,8 +1,8 @@
 import React from 'react';
-import ProductCard from '../ProductCard/ProductCard';
+import { ProductCard } from '../ProductCard/ProductCard';
 import './ProductGrid.css';
 
-export default function ProductGrid({ products, onAddToCart }) {
+export function ProductGrid({ products, onAddToCart }) {
   const handleAddToCart = (product) => {
     if (onAddToCart) {
       onAddToCart(product);

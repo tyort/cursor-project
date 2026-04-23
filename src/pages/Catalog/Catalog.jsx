@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import ProductGrid from '../../components/ProductGrid/ProductGrid';
+import { ProductGrid } from '../../components/ProductGrid/ProductGrid';
 import { products } from '../../data/products';
 import { useCart } from '../../contexts/CartContext';
-import Notification from '../../components/Notification/Notification';
+import { Notification } from '../../components/Notification/Notification';
 import './Catalog.css';
 
-export default function Catalog() {
+export function Catalog() {
   const { addToCart } = useCart();
   const [notification, setNotification] = useState({ open: false, message: '' });
 

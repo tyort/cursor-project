@@ -2,7 +2,7 @@ import React from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import './Notification.css';
 
-export default function Notification({ open, message, severity = 'warning', onClose }) {
+export function Notification({ open, message, severity = 'warning', onClose }) {
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;

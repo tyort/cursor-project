@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useCart } from '../../contexts/CartContext';
 import './CartItem.css';
 
-export default function CartItem({ item, onUpdateQuantity }) {
+export function CartItem({ item, onUpdateQuantity }) {
   const { removeFromCart, updateQuantity } = useCart();
 
   const formatPrice = (price) => {

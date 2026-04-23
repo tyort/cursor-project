@@ -4,7 +4,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useCart } from '../../contexts/CartContext';
 import './Header.css';
 
-export default function Header() {
+export function Header() {
   const { getTotalItems } = useCart();
   const totalItems = getTotalItems();
 
