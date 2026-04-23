@@ -2,7 +2,7 @@ import React from 'react';
 import { formatPrice } from '../../utils/formatPrice';
 import './ProductCard.css';
 
-export function ProductCard({ product, onAddToCart }) {
+export function ProductCard({ product, onAddToCart, isAddDisabled = false }) {
   const handleAddToCart = () => {
     if (onAddToCart) {
       onAddToCart(product);
@@ -39,6 +39,7 @@ export function ProductCard({ product, onAddToCart }) {
           <button 
             className="product-card__button"
             onClick={handleAddToCart}
+            disabled={isAddDisabled}
           >
             Добавить в корзину
           </button>

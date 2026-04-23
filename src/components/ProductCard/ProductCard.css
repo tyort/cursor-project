@@ -108,3 +108,16 @@
   transform: scale(0.98);
 }
 
+.product-card__button:disabled {
+  background: #bdbdbd;
+  color: #f5f5f5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.product-card__button:disabled:hover,
+.product-card__button:disabled:active {
+  background: #bdbdbd;
+  transform: none;
+}
+

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { ProductCard } from '../ProductCard/ProductCard';
 import './ProductGrid.css';
 
-export function ProductGrid({ products, onAddToCart }) {
+export function ProductGrid({ products, onAddToCart, isAddToCartDisabled }) {
   const handleAddToCart = useCallback((product) => {
     onAddToCart(product);
   }, [onAddToCart]);
@@ -14,6 +14,7 @@ export function ProductGrid({ products, onAddToCart }) {
           key={product.id}
           product={product}
           onAddToCart={handleAddToCart}
+          isAddDisabled={isAddToCartDisabled ? isAddToCartDisabled(product.id) : false}
         />
       ))}
     </div>
