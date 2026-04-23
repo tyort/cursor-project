@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ProductGrid } from '../../components/ProductGrid/ProductGrid';
 import { products } from '../../data/products';
 import { useCart } from '../../contexts/CartContext';
@@ -9,7 +9,7 @@ export function Catalog() {
   const { addToCart } = useCart();
   const [notification, setNotification] = useState({ open: false, message: '' });
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = useCallback((product) => {
     const result = addToCart(product);
     
     if (!result.success) {
@@ -18,11 +18,11 @@ export function Catalog() {
         message: result.message
       });
     }
-  };
+  }, [addToCart]);
 
-  const handleCloseNotification = () => {
+  const handleCloseNotification = useCallback(() => {
     setNotification({ open: false, message: '' });
-  };
+  }, []);
 
   return (
     <div className="catalog">

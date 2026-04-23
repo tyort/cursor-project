@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { ProductCard } from '../ProductCard/ProductCard';
 import './ProductGrid.css';
 
 export function ProductGrid({ products, onAddToCart }) {
-  const handleAddToCart = (product) => {
+  const handleAddToCart = useCallback((product) => {
     if (onAddToCart) {
       onAddToCart(product);
     } else {
       console.log('Товар добавлен в корзину:', product);
     }
-  };
+  }, [onAddToCart]);
 
   return (
     <div className="product-grid-container">

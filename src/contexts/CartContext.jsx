@@ -1,6 +1,9 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useMemo, useCallback } from 'react';
 
 const CartContext = createContext();
+const MAX_QUANTITY_PER_PRODUCT = 2;
+const PROMO_CODE = 'Кекс';
+const PROMO_DISCOUNT = 15;
 
 export const useCart = () => {
   const context = useContext(CartContext);
@@ -13,60 +16,57 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isPromoApplied, setIsPromoApplied] = useState(false);
-  const MAX_QUANTITY_PER_PRODUCT = 2;
-  const PROMO_CODE = 'Кекс';
-  const PROMO_DISCOUNT = 15;
 
-  const addToCart = (product) => {
+  const addToCart = useCallback((product) => {
     const existingItem = cartItems.find((item) => item.id === product.id);
-    
+
     // Проверяем лимит количества товара
     if (existingItem && existingItem.quantity >= MAX_QUANTITY_PER_PRODUCT) {
       return { success: false, message: `Достигнут лимит: можно добавить не более ${MAX_QUANTITY_PER_PRODUCT} шт. товара "${product.name}"` };
     }
-    
+
     setCartItems((prevItems) => {
       const currentItem = prevItems.find((item) => item.id === product.id);
-      
+
       // Вычисляем цену со скидкой
       const discount = product.discount || 0;
-      const discountedPrice = discount > 0 
+      const discountedPrice = discount > 0
         ? Math.round(product.price * (1 - discount / 100))
         : product.price;
-      
+
       if (currentItem) {
         // Сохраняем оригинальную цену и цену со скидкой, если их ещё нет
         return prevItems.map((item) =>
           item.id === product.id
-            ? { 
-                ...item, 
+            ? {
+                ...item,
                 quantity: item.quantity + 1,
                 originalPrice: item.originalPrice || product.price,
-                discountedPrice: item.discountedPrice !== undefined 
-                  ? item.discountedPrice 
+                discountedPrice: item.discountedPrice !== undefined
+                  ? item.discountedPrice
                   : discountedPrice
               }
             : item
         );
       }
-      
+
       // Сохраняем оригинальную цену и цену со скидкой
-      return [...prevItems, { 
-        ...product, 
+      return [...prevItems, {
+        ...product,
         quantity: 1,
         originalPrice: product.price,
-        discountedPrice: discountedPrice
+        discountedPrice
       }];
     });
-    
+
     return { success: true };
-  };
+  }, [cartItems]);
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = useCallback((productId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
-  };
+  }, []);
 
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = useCallback((productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
       return { success: true };
@@ -88,41 +88,37 @@ export const CartProvider = ({ children }) => {
           : item
       )
     );
-    
+
     return { success: true };
-  };
+  }, [cartItems, removeFromCart]);
 
-  const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  const getTotalPrice = () => {
-    const subtotal = cartItems.reduce((total, item) => {
-      // Используем цену со скидкой, если она есть, иначе обычную цену
-      const itemPrice = item.discountedPrice !== undefined 
-        ? item.discountedPrice 
+  const subtotal = useMemo(
+    () => cartItems.reduce((total, item) => {
+      const itemPrice = item.discountedPrice !== undefined
+        ? item.discountedPrice
         : (item.originalPrice || item.price);
       return total + itemPrice * item.quantity;
-    }, 0);
-    
-    // Применяем скидку промокода, если промокод применен
+    }, 0),
+    [cartItems]
+  );
+
+  const totalItems = useMemo(
+    () => cartItems.reduce((total, item) => total + item.quantity, 0),
+    [cartItems]
+  );
+
+  const totalPrice = useMemo(() => {
     if (isPromoApplied) {
       return Math.round(subtotal * (1 - PROMO_DISCOUNT / 100));
     }
-    
     return subtotal;
-  };
+  }, [isPromoApplied, subtotal]);
 
-  const getSubtotal = () => {
-    return cartItems.reduce((total, item) => {
-      const itemPrice = item.discountedPrice !== undefined 
-        ? item.discountedPrice 
-        : (item.originalPrice || item.price);
-      return total + itemPrice * item.quantity;
-    }, 0);
-  };
+  const getSubtotal = useCallback(() => subtotal, [subtotal]);
+  const getTotalItems = useCallback(() => totalItems, [totalItems]);
+  const getTotalPrice = useCallback(() => totalPrice, [totalPrice]);
 
-  const applyPromoCode = (code) => {
+  const applyPromoCode = useCallback((code) => {
     // Проверяем, не применен ли уже промокод
     if (isPromoApplied) {
       return { success: false, message: 'Промокод уже применен' };
@@ -135,23 +131,33 @@ export const CartProvider = ({ children }) => {
     
     setIsPromoApplied(true);
     return { success: true };
-  };
+  }, [isPromoApplied]);
+
+  const value = useMemo(() => ({
+    cartItems,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    getTotalItems,
+    getTotalPrice,
+    getSubtotal,
+    applyPromoCode,
+    isPromoApplied,
+    MAX_QUANTITY_PER_PRODUCT,
+  }), [
+    cartItems,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    getTotalItems,
+    getTotalPrice,
+    getSubtotal,
+    applyPromoCode,
+    isPromoApplied,
+  ]);
 
   return (
-    <CartContext.Provider
-      value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        getTotalItems,
-        getTotalPrice,
-        getSubtotal,
-        applyPromoCode,
-        isPromoApplied,
-        MAX_QUANTITY_PER_PRODUCT,
-      }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

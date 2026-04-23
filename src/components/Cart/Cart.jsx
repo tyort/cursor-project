@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { CartItem } from '../CartItem/CartItem';
 import { Notification } from '../Notification/Notification';
@@ -19,15 +19,15 @@ export function Cart() {
   const [promoCode, setPromoCode] = useState('');
   const [promoError, setPromoError] = useState('');
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      minimumFractionDigits: 0
-    }).format(price);
-  };
+  const priceFormatter = useMemo(() => new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    minimumFractionDigits: 0
+  }), []);
 
-  const handleUpdateQuantity = (itemId, newQuantity) => {
+  const formatPrice = useCallback((price) => priceFormatter.format(price), [priceFormatter]);
+
+  const handleUpdateQuantity = useCallback((itemId, newQuantity) => {
     const result = updateQuantity(itemId, newQuantity);
     
     if (!result.success) {
@@ -36,27 +36,27 @@ export function Cart() {
         message: result.message
       });
     }
-  };
+  }, [updateQuantity]);
 
-  const handleCloseNotification = () => {
+  const handleCloseNotification = useCallback(() => {
     setNotification({ open: false, message: '' });
-  };
+  }, []);
 
-  const handleApplyPromoCode = () => {
+  const handleApplyPromoCode = useCallback(() => {
     setPromoError('');
     const result = applyPromoCode(promoCode);
     
     if (!result.success) {
       setPromoError(result.message);
     }
-  };
+  }, [applyPromoCode, promoCode]);
 
-  const handlePromoCodeChange = (e) => {
+  const handlePromoCodeChange = useCallback((e) => {
     setPromoCode(e.target.value);
     if (promoError) {
       setPromoError('');
     }
-  };
+  }, [promoError]);
 
   if (cartItems.length === 0) {
     return (
