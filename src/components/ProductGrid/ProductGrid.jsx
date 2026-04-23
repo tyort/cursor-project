@@ -4,24 +4,18 @@ import './ProductGrid.css';
 
 export function ProductGrid({ products, onAddToCart }) {
   const handleAddToCart = useCallback((product) => {
-    if (onAddToCart) {
-      onAddToCart(product);
-    } else {
-      console.log('Товар добавлен в корзину:', product);
-    }
+    onAddToCart(product);
   }, [onAddToCart]);
 
   return (
-    <div className="product-grid-container">
-      <div className="product-grid">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={handleAddToCart}
-          />
-        ))}
-      </div>
+    <div className="product-grid">
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          onAddToCart={handleAddToCart}
+        />
+      ))}
     </div>
   );
 }

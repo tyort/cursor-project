@@ -25,17 +25,15 @@
 }
 
 .cart__promo-section {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem 1rem;
+  align-items: center;
   background-color: white;
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
-}
-
-.cart__promo-input-group {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
 }
 
 .cart__promo-input {
@@ -86,6 +84,7 @@
 }
 
 .cart__promo-error {
+  grid-column: 1 / -1;
   margin-top: 0.5rem;
   color: #f44336;
   font-size: 0.875rem;
@@ -93,11 +92,18 @@
 }
 
 .cart__promo-success {
+  grid-column: 1 / -1;
   margin-top: 0.5rem;
   color: #2e7d32;
   font-size: 0.875rem;
   font-weight: 500;
   margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .cart__promo-section {
+    grid-template-columns: 1fr;
+  }
 }
 
 .cart__total {

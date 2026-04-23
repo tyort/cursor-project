@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { CartItem } from '../CartItem/CartItem';
 import { Notification } from '../Notification/Notification';
+import { formatPrice } from '../../utils/formatPrice';
 import './Cart.css';
 
 export function Cart() {
@@ -18,14 +19,6 @@ export function Cart() {
   const [notification, setNotification] = useState({ open: false, message: '' });
   const [promoCode, setPromoCode] = useState('');
   const [promoError, setPromoError] = useState('');
-
-  const priceFormatter = useMemo(() => new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    minimumFractionDigits: 0
-  }), []);
-
-  const formatPrice = useCallback((price) => priceFormatter.format(price), [priceFormatter]);
 
   const handleUpdateQuantity = useCallback((itemId, newQuantity) => {
     const result = updateQuantity(itemId, newQuantity);
@@ -74,23 +67,21 @@ export function Cart() {
       <div className="cart__container">
         <h2 className="cart__title">Корзина</h2>
         <div className="cart__promo-section">
-          <div className="cart__promo-input-group">
-            <input
-              type="text"
-              className="cart__promo-input"
-              placeholder="Введите промокод"
-              value={promoCode}
-              onChange={handlePromoCodeChange}
-              disabled={isPromoApplied}
-            />
-            <button
-              className="cart__promo-button"
-              onClick={handleApplyPromoCode}
-              disabled={isPromoApplied || !promoCode.trim()}
-            >
-              Применить
-            </button>
-          </div>
+          <input
+            type="text"
+            className="cart__promo-input"
+            placeholder="Введите промокод"
+            value={promoCode}
+            onChange={handlePromoCodeChange}
+            disabled={isPromoApplied}
+          />
+          <button
+            className="cart__promo-button"
+            onClick={handleApplyPromoCode}
+            disabled={isPromoApplied || !promoCode.trim()}
+          >
+            Применить
+          </button>
           {promoError && (
             <p className="cart__promo-error">{promoError}</p>
           )}

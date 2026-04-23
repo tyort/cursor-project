@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatPrice } from '../../utils/formatPrice';
 import './ProductCard.css';
 
 export function ProductCard({ product, onAddToCart }) {
@@ -6,14 +7,6 @@ export function ProductCard({ product, onAddToCart }) {
     if (onAddToCart) {
       onAddToCart(product);
     }
-  };
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      minimumFractionDigits: 0
-    }).format(price);
   };
 
   // Вычисляем цену со скидкой

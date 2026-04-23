@@ -3,37 +3,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { useCart } from '../../contexts/CartContext';
+import { formatPrice } from '../../utils/formatPrice';
 import './CartItem.css';
 
 export function CartItem({ item, onUpdateQuantity }) {
-  const { removeFromCart, updateQuantity } = useCart();
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      minimumFractionDigits: 0
-    }).format(price);
-  };
+  const { removeFromCart } = useCart();
 
   const handleRemove = () => {
     removeFromCart(item.id);
   };
 
   const handleDecrease = () => {
-    if (onUpdateQuantity) {
-      onUpdateQuantity(item.id, item.quantity - 1);
-    } else {
-      updateQuantity(item.id, item.quantity - 1);
-    }
+    onUpdateQuantity(item.id, item.quantity - 1);
   };
 
   const handleIncrease = () => {
-    if (onUpdateQuantity) {
-      onUpdateQuantity(item.id, item.quantity + 1);
-    } else {
-      updateQuantity(item.id, item.quantity + 1);
-    }
+    onUpdateQuantity(item.id, item.quantity + 1);
   };
 
   // Используем цену со скидкой, если она есть, иначе обычную цену

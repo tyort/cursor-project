@@ -1,15 +1,9 @@
-.product-grid-container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   width: 100%;
+  padding: 24px;
 }
 
 @media (max-width: 1200px) {
@@ -27,9 +21,6 @@
 @media (max-width: 600px) {
   .product-grid {
     grid-template-columns: 1fr;
-  }
-  
-  .product-grid-container {
     padding: 16px;
   }
 }
