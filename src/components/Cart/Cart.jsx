@@ -5,6 +5,13 @@ import { Notification } from '../Notification/Notification';
 import { formatPrice } from '../../utils/formatPrice';
 import './Cart.css';
 
+/**
+ * Компонент корзины покупок.
+ * Отображает список добавленных товаров, позволяет изменять их количество,
+ * применять промокод и видеть итоговую стоимость.
+ *
+ * @returns {JSX.Element} Компонент корзины.
+ */
 export function Cart() {
   const {
     cartItems,

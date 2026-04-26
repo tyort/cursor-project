@@ -1,13 +1,62 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ProductGrid } from '../../components/ProductGrid/ProductGrid';
-import { products } from '../../data/products';
+import { products as fallbackProducts } from '../../data/products';
 import { useCart } from '../../contexts/CartContext';
 import { Notification } from '../../components/Notification/Notification';
 import './Catalog.css';
 
+/**
+ * Компонент каталога товаров.
+ * Загружает список товаров с внешнего API, отображает их в виде сетки
+ * и обеспечивает интеграцию с корзиной. При ошибке загрузки использует локальные данные.
+ *
+ * @returns {JSX.Element} Страница каталога.
+ */
 export function Catalog() {
   const { addToCart, cartItems, MAX_QUANTITY_PER_PRODUCT } = useCart();
-  const [notification, setNotification] = useState({ open: false, message: '' });
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'warning' });
+  const [productsList, setProductsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('https://fakestoreapi.com/products?limit=10');
+        
+        if (!response.ok) {
+          throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Маппинг данных из FakeStoreAPI в наш формат
+        const mappedProducts = data.map(item => ({
+          id: item.id,
+          name: item.title,
+          price: Math.round(item.price * 90), // Конвертация в условные рубли
+          discount: item.id % 2 === 0 ? 10 : 0, // Искусственная скидка для каждого второго товара
+          description: item.description,
+          image: item.image
+        }));
+        
+        setProductsList(mappedProducts);
+      } catch (error) {
+        console.error('Ошибка загрузки товаров:', error);
+        // Обработка ошибки: показ уведомления и фоллбэк на локальные данные
+        setNotification({
+          open: true,
+          message: 'Не удалось загрузить актуальные товары с сервера. Показан кэшированный каталог.',
+          severity: 'error'
+        });
+        setProductsList(fallbackProducts);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleAddToCart = useCallback((product) => {
     const result = addToCart(product);
@@ -15,13 +64,14 @@ export function Catalog() {
     if (!result.success) {
       setNotification({
         open: true,
-        message: result.message
+        message: result.message,
+        severity: 'warning'
       });
     }
   }, [addToCart]);
 
   const handleCloseNotification = useCallback(() => {
-    setNotification({ open: false, message: '' });
+    setNotification(prev => ({ ...prev, open: false }));
   }, []);
 
   const isAddToCartDisabled = useCallback((productId) => {
@@ -33,16 +83,20 @@ export function Catalog() {
     <div className="catalog">
       <div className="catalog__container">
         <h2 className="catalog__title">Каталог товаров</h2>
-        <ProductGrid
-          products={products}
-          onAddToCart={handleAddToCart}
-          isAddToCartDisabled={isAddToCartDisabled}
-        />
+        {isLoading ? (
+          <p className="catalog__loading">Загрузка товаров...</p>
+        ) : (
+          <ProductGrid
+            products={productsList}
+            onAddToCart={handleAddToCart}
+            isAddToCartDisabled={isAddToCartDisabled}
+          />
+        )}
       </div>
       <Notification
         open={notification.open}
         message={notification.message}
-        severity="warning"
+        severity={notification.severity || "warning"}
         onClose={handleCloseNotification}
       />
     </div>

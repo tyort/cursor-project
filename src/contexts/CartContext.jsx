@@ -5,6 +5,11 @@ const MAX_QUANTITY_PER_PRODUCT = 2;
 const PROMO_CODE = 'Кекс';
 const PROMO_DISCOUNT = 15;
 
+/**
+ * Хук для использования контекста корзины.
+ * @returns {Object} Объект с данными и методами корзины.
+ * @throws {Error} Ошибка, если хук используется вне CartProvider.
+ */
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
@@ -13,10 +18,25 @@ export const useCart = () => {
   return context;
 };
 
+/**
+ * Провайдер состояния корзины.
+ * Оборачивает дочерние компоненты и предоставляет им доступ к корзине.
+ *
+ * @param {Object} props - Свойства компонента.
+ * @param {React.ReactNode} props.children - Дочерние элементы.
+ * @returns {JSX.Element} Провайдер контекста корзины.
+ */
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isPromoApplied, setIsPromoApplied] = useState(false);
 
+  /**
+   * Добавляет товар в корзину.
+   * Учитывает скидку товара и максимальное разрешенное количество.
+   *
+   * @param {Object} product - Объект добавляемого товара.
+   * @returns {{ success: boolean, message?: string }} Результат добавления.
+   */
   const addToCart = useCallback((product) => {
     const existingItem = cartItems.find((item) => item.id === product.id);
 
@@ -62,10 +82,23 @@ export const CartProvider = ({ children }) => {
     return { success: true };
   }, [cartItems]);
 
+  /**
+   * Удаляет товар из корзины.
+   *
+   * @param {string|number} productId - Идентификатор удаляемого товара.
+   */
   const removeFromCart = useCallback((productId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
   }, []);
 
+  /**
+   * Обновляет количество товара в корзине.
+   * При достижении 0 удаляет товар. Проверяет максимальное допустимое количество.
+   *
+   * @param {string|number} productId - Идентификатор товара.
+   * @param {number} newQuantity - Новое количество товара.
+   * @returns {{ success: boolean, message?: string }} Результат обновления количества.
+   */
   const updateQuantity = useCallback((productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
@@ -118,6 +151,12 @@ export const CartProvider = ({ children }) => {
   const getTotalItems = useCallback(() => totalItems, [totalItems]);
   const getTotalPrice = useCallback(() => totalPrice, [totalPrice]);
 
+  /**
+   * Применяет промокод к корзине.
+   *
+   * @param {string} code - Введенный промокод.
+   * @returns {{ success: boolean, message?: string }} Результат применения промокода.
+   */
   const applyPromoCode = useCallback((code) => {
     // Проверяем, не применен ли уже промокод
     if (isPromoApplied) {

@@ -1,0 +1,7 @@
+{
+  "source": {
+    "includePattern": ".+\\.jsx?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": ["plugins/markdown"]
+}
