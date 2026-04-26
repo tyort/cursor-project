@@ -3,6 +3,10 @@ import { formatPrice } from '../../utils/formatPrice';
 import './ProductCard.css';
 
 export function ProductCard({ product, onAddToCart, isAddDisabled = false }) {
+  if (!product) {
+    return null;
+  }
+
   const handleAddToCart = () => {
     if (onAddToCart) {
       onAddToCart(product);

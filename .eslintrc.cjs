@@ -34,4 +34,20 @@ module.exports = {
     // Не требуем PropTypes (актуально при использовании альтернативной типизации).
     'react/prop-types': 'off',
   },
+  overrides: [
+    {
+      files: ['**/*.test.{js,jsx}', '**/*.spec.{js,jsx}'],
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly',
+      },
+    },
+  ],
 };
