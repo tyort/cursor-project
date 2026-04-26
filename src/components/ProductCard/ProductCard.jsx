@@ -11,15 +11,15 @@ export function ProductCard({ product, onAddToCart, isAddDisabled = false }) {
 
   // Вычисляем цену со скидкой
   const discount = product.discount || 0;
-  const discountedPrice = discount > 0 
+  const discountedPrice = discount > 0
     ? Math.round(product.price * (1 - discount / 100))
     : product.price;
 
   return (
     <div className="product-card">
       <div className="product-card__image-container">
-        <img 
-          src={product.image} 
+        <img
+          src={product.image}
           alt={product.name}
           className="product-card__image"
         />
@@ -36,7 +36,7 @@ export function ProductCard({ product, onAddToCart, isAddDisabled = false }) {
             )}
             <p className="product-card__price">{formatPrice(discountedPrice)}</p>
           </div>
-          <button 
+          <button
             className="product-card__button"
             onClick={handleAddToCart}
             disabled={isAddDisabled}

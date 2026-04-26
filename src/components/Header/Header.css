@@ -1,6 +1,6 @@
 .header {
   background-color: #1976d2;
-  color: white;
+  color: #ffffff;
   padding: 1rem 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -16,7 +16,7 @@
 
 .header__logo {
   text-decoration: none;
-  color: white;
+  color: #ffffff;
 }
 
 .header__title {
@@ -27,7 +27,7 @@
 
 .header__cart-link {
   text-decoration: none;
-  color: white;
+  color: #ffffff;
   position: relative;
 }
 
@@ -43,8 +43,8 @@
   opacity: 0.8;
 }
 
-.header__cart-icon {
-  font-size: 2rem !important;
+.header__cart-icon.header__cart-icon {
+  font-size: 2rem;
 }
 
 .header__cart-badge {
@@ -52,7 +52,7 @@
   top: -8px;
   right: -8px;
   background-color: #ff5722;
-  color: white;
+  color: #ffffff;
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -61,6 +61,6 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 600;
-  border: 2px solid white;
+  border: 2px solid #ffffff;
 }
 

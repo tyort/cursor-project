@@ -22,8 +22,8 @@ export function CartItem({ item, onUpdateQuantity }) {
   };
 
   // Используем цену со скидкой, если она есть, иначе обычную цену
-  const itemPrice = item.discountedPrice !== undefined 
-    ? item.discountedPrice 
+  const itemPrice = item.discountedPrice !== undefined
+    ? item.discountedPrice
     : (item.originalPrice || item.price);
   const total = itemPrice * item.quantity;
 

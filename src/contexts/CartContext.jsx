@@ -39,13 +39,13 @@ export const CartProvider = ({ children }) => {
         return prevItems.map((item) =>
           item.id === product.id
             ? {
-                ...item,
-                quantity: item.quantity + 1,
-                originalPrice: item.originalPrice || product.price,
-                discountedPrice: item.discountedPrice !== undefined
-                  ? item.discountedPrice
-                  : discountedPrice
-              }
+              ...item,
+              quantity: item.quantity + 1,
+              originalPrice: item.originalPrice || product.price,
+              discountedPrice: item.discountedPrice !== undefined
+                ? item.discountedPrice
+                : discountedPrice
+            }
             : item
         );
       }
@@ -71,16 +71,16 @@ export const CartProvider = ({ children }) => {
       removeFromCart(productId);
       return { success: true };
     }
-    
+
     // Проверяем лимит количества товара
     if (newQuantity > MAX_QUANTITY_PER_PRODUCT) {
-      const item = cartItems.find((item) => item.id === productId);
-      return { 
-        success: false, 
-        message: `Достигнут лимит: можно добавить не более ${MAX_QUANTITY_PER_PRODUCT} шт. товара "${item?.name || ''}"` 
+      const item = cartItems.find((cartItem) => cartItem.id === productId);
+      return {
+        success: false,
+        message: `Достигнут лимит: можно добавить не более ${MAX_QUANTITY_PER_PRODUCT} шт. товара "${item?.name || ''}"`
       };
     }
-    
+
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === productId
@@ -123,12 +123,12 @@ export const CartProvider = ({ children }) => {
     if (isPromoApplied) {
       return { success: false, message: 'Промокод уже применен' };
     }
-    
+
     // Проверяем правильность промокода
     if (code.trim() !== PROMO_CODE) {
       return { success: false, message: 'Неверный промокод' };
     }
-    
+
     setIsPromoApplied(true);
     return { success: true };
   }, [isPromoApplied]);

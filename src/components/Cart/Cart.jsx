@@ -6,13 +6,13 @@ import { formatPrice } from '../../utils/formatPrice';
 import './Cart.css';
 
 export function Cart() {
-  const { 
-    cartItems, 
-    getTotalPrice, 
+  const {
+    cartItems,
+    getTotalPrice,
     getSubtotal,
-    updateQuantity, 
+    updateQuantity,
     applyPromoCode,
-    isPromoApplied 
+    isPromoApplied
   } = useCart();
   const totalPrice = getTotalPrice();
   const subtotal = getSubtotal();
@@ -22,7 +22,7 @@ export function Cart() {
 
   const handleUpdateQuantity = useCallback((itemId, newQuantity) => {
     const result = updateQuantity(itemId, newQuantity);
-    
+
     if (!result.success) {
       setNotification({
         open: true,
@@ -38,7 +38,7 @@ export function Cart() {
   const handleApplyPromoCode = useCallback(() => {
     setPromoError('');
     const result = applyPromoCode(promoCode);
-    
+
     if (!result.success) {
       setPromoError(result.message);
     }
@@ -114,9 +114,9 @@ export function Cart() {
             </thead>
             <tbody>
               {cartItems.map((item) => (
-                <CartItem 
-                  key={item.id} 
-                  item={item} 
+                <CartItem
+                  key={item.id}
+                  item={item}
                   onUpdateQuantity={handleUpdateQuantity}
                 />
               ))}

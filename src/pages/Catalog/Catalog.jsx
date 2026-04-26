@@ -11,7 +11,7 @@ export function Catalog() {
 
   const handleAddToCart = useCallback((product) => {
     const result = addToCart(product);
-    
+
     if (!result.success) {
       setNotification({
         open: true,

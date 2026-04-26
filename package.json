@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:scripts": "eslint \"src/**/*{js,jsx}\"",
+    "lint:script:fix": "eslint \"src/**/*{js,jsx}\" --fix",
+    "lint:styles": "stylelint \"src/components/**/*.{css,scss,sass,less}\"",
+    "lint:styles:fix": "stylelint \"src/components/**/*.{css,scss,sass,less}\" --fix"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -19,6 +23,10 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "5.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-htmlacademy": "^10.0.1",
+    "stylelint": "^16.6.0",
+    "stylelint-config-htmlacademy": "^4.2.2",
     "vite": "7.0.0"
   }
 }
