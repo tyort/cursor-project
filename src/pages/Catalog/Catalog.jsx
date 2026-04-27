@@ -23,15 +23,15 @@ export function Catalog() {
       try {
         setIsLoading(true);
         const response = await fetch('https://fakestoreapi.com/products?limit=10');
-        
+
         if (!response.ok) {
           throw new Error(`Ошибка HTTP: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+
         // Маппинг данных из FakeStoreAPI в наш формат
-        const mappedProducts = data.map(item => ({
+        const mappedProducts = data.map((item) => ({
           id: item.id,
           name: item.title,
           price: Math.round(item.price * 90), // Конвертация в условные рубли
@@ -39,7 +39,7 @@ export function Catalog() {
           description: item.description,
           image: item.image
         }));
-        
+
         setProductsList(mappedProducts);
       } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
@@ -71,7 +71,7 @@ export function Catalog() {
   }, [addToCart]);
 
   const handleCloseNotification = useCallback(() => {
-    setNotification(prev => ({ ...prev, open: false }));
+    setNotification((prev) => ({ ...prev, open: false }));
   }, []);
 
   const isAddToCartDisabled = useCallback((productId) => {
@@ -96,7 +96,7 @@ export function Catalog() {
       <Notification
         open={notification.open}
         message={notification.message}
-        severity={notification.severity || "warning"}
+        severity={notification.severity || 'warning'}
         onClose={handleCloseNotification}
       />
     </div>

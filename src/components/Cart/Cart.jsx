@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import { CartItem } from '../CartItem/CartItem';
 import { Notification } from '../Notification/Notification';
@@ -13,6 +14,7 @@ import './Cart.css';
  * @returns {JSX.Element} Компонент корзины.
  */
 export function Cart() {
+  const navigate = useNavigate();
   const {
     cartItems,
     getTotalPrice,
@@ -107,6 +109,13 @@ export function Cart() {
             <span className="cart__total-label">Общая стоимость:</span>
             <span className="cart__total-price">{formatPrice(totalPrice)}</span>
           </div>
+          <button 
+            className="cart__promo-button"
+            style={{ marginTop: '16px', width: '100%', padding: '12px' }}
+            onClick={() => navigate('/checkout')}
+          >
+            Оформить заказ
+          </button>
         </div>
         <div className="cart__table-wrapper">
           <table className="cart__table">

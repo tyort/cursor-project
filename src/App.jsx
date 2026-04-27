@@ -4,6 +4,7 @@ import { CartProvider } from './contexts/CartContext';
 import { Header } from './components/Header/Header';
 import { Catalog } from './pages/Catalog/Catalog';
 import { Cart } from './components/Cart/Cart';
+import { CheckoutForm } from './components/CheckoutForm/CheckoutForm';
 import './App.css';
 
 export function App() {
@@ -16,6 +17,7 @@ export function App() {
             <Routes>
               <Route path="/" element={<Catalog />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<CheckoutForm />} />
             </Routes>
           </main>
         </div>

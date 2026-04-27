@@ -33,6 +33,8 @@ module.exports = {
     'check-file/folder-naming-convention': 'off',
     // Не требуем PropTypes (актуально при использовании альтернативной типизации).
     'react/prop-types': 'off',
+    // Разрешаем console-логи в проекте.
+    'no-console': 'off',
   },
   overrides: [
     {

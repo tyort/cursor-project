@@ -4,21 +4,21 @@ import path from 'path';
 async function extractJSDoc(filePath) {
   const content = await fs.readFile(filePath, 'utf-8');
   const blocks = [];
-  
+
   // Regex to match JSDoc comments and the following function/const declaration
   const jsdocRegex = /\/\*\*([\s\S]*?)\*\/\s*(?:export\s+)?(?:const|function|let|class)\s+([a-zA-Z0-9_]+)/g;
-  
+
   let match;
   while ((match = jsdocRegex.exec(content)) !== null) {
     const rawDoc = match[1];
     const name = match[2];
-    
-    const lines = rawDoc.split('\n').map(l => l.replace(/^\s*\*\s?/, '').trim());
-    
+
+    const lines = rawDoc.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim());
+
     const descriptionLines = [];
     const params = [];
     const returns = [];
-    
+
     for (const line of lines) {
       if (line.startsWith('@param')) {
         const pMatch = line.match(/@param\s+\{([^}]+)\}\s+([a-zA-Z0-9_.[\]=]+)\s*(?:-\s*(.*))?/);
@@ -31,10 +31,12 @@ async function extractJSDoc(filePath) {
           returns.push({ type: rMatch[1], desc: rMatch[2] || '' });
         }
       } else if (!line.startsWith('@')) {
-        if (line) descriptionLines.push(line);
+        if (line) {
+          descriptionLines.push(line);
+        }
       }
     }
-    
+
     blocks.push({
       name,
       description: descriptionLines.join(' '),
@@ -42,35 +44,39 @@ async function extractJSDoc(filePath) {
       returns
     });
   }
-  
+
   return blocks;
 }
 
 function formatMarkdown(blocks, fileName) {
-  if (blocks.length === 0) return '';
-  
+  if (blocks.length === 0) {
+    return '';
+  }
+
   let md = `### File: \`${fileName}\`\n\n`;
   for (const b of blocks) {
     md += `#### \`${b.name}\`\n\n`;
-    if (b.description) md += `${b.description}\n\n`;
-    
+    if (b.description) {
+      md += `${b.description}\n\n`;
+    }
+
     if (b.params.length > 0) {
-      md += `**Параметры:**\n`;
+      md += '**Параметры:**\n';
       for (const p of b.params) {
         md += `- \`${p.name}\` (\`${p.type}\`) - ${p.desc}\n`;
       }
-      md += `\n`;
+      md += '\n';
     }
-    
+
     if (b.returns.length > 0) {
-      md += `**Возвращает:**\n`;
+      md += '**Возвращает:**\n';
       for (const r of b.returns) {
         md += `- (\`${r.type}\`) - ${r.desc}\n`;
       }
-      md += `\n`;
+      md += '\n';
     }
   }
-  
+
   return md;
 }
 
@@ -85,7 +91,7 @@ async function generateDocs() {
   ];
 
   let allMd = '';
-  
+
   for (const file of files) {
     const blocks = await extractJSDoc(file);
     allMd += formatMarkdown(blocks, path.basename(file));
@@ -101,7 +107,7 @@ async function generateDocs() {
     const endIdx = readme.indexOf(endTag);
 
     if (startIdx !== -1 && endIdx !== -1) {
-      readme = readme.slice(0, startIdx + startTag.length) + '\n\n' + allMd + '\n' + readme.slice(endIdx);
+      readme = `${readme.slice(0, startIdx + startTag.length) }\n\n${ allMd }\n${ readme.slice(endIdx)}`;
     } else {
       readme += `\n\n## Документация по коду (JSDoc API)\n\n${startTag}\n\n${allMd}\n${endTag}\n`;
     }
