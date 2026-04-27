@@ -3,6 +3,8 @@ import { ProductGrid } from '../../components/ProductGrid/ProductGrid';
 import { products as fallbackProducts } from '../../data/products';
 import { useCart } from '../../contexts/CartContext';
 import { Notification } from '../../components/Notification/Notification';
+import { fetchWithRetry } from '../../utils/apiClient';
+import { NetworkError, ServiceUnavailableError } from '../../utils/apiErrors';
 import './Catalog.css';
 
 /**
@@ -22,13 +24,17 @@ export function Catalog() {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('https://fakestoreapi.com/products?limit=10');
-
-        if (!response.ok) {
-          throw new Error(`Ошибка HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchWithRetry(
+          'https://fakestoreapi.com/products?limit=10',
+          {},
+          {
+            retries: 3,
+            retryDelay: 1000,
+            cacheKey: 'catalog_products',
+            cacheTTL: 1000 * 60 * 60 * 2, // 2 часа кэш
+            fallbackData: fallbackProducts // Резервные данные, если API и кэш недоступны
+          }
+        );
 
         // Маппинг данных из FakeStoreAPI в наш формат
         const mappedProducts = data.map((item) => ({
@@ -43,13 +49,35 @@ export function Catalog() {
         setProductsList(mappedProducts);
       } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
-        // Обработка ошибки: показ уведомления и фоллбэк на локальные данные
-        setNotification({
-          open: true,
-          message: 'Не удалось загрузить актуальные товары с сервера. Показан кэшированный каталог.',
-          severity: 'error'
-        });
-        setProductsList(fallbackProducts);
+        
+        // Обработка fallback-стратегии
+        if (error.cachedData || error.fallbackData) {
+          const fallbackSource = error.cachedData ? error.cachedData : error.fallbackData;
+          
+          // Маппинг данных (FakeStoreAPI или fallback) в наш формат
+          const mappedProducts = fallbackSource.map((item) => ({
+            id: item.id,
+            name: item.title || item.name, // Поддержка как FakeStoreAPI (title), так и fallback (name)
+            price: item.price > 1000 ? item.price : Math.round(item.price * 90), // Конвертация, если данные из API
+            discount: item.discount !== undefined ? item.discount : (item.id % 2 === 0 ? 10 : 0),
+            description: item.description,
+            image: item.image
+          }));
+
+          setProductsList(mappedProducts);
+          
+          setNotification({
+            open: true,
+            message: 'Не удалось загрузить актуальные товары с сервера. Показан кэшированный каталог.',
+            severity: 'warning'
+          });
+        } else {
+          setNotification({
+            open: true,
+            message: 'Не удалось загрузить товары. Пожалуйста, проверьте подключение к интернету.',
+            severity: 'error'
+          });
+        }
       } finally {
         setIsLoading(false);
       }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Alert, CircularProgress, Autocomplete } from '@mui/material';
 import { geocodeAddress } from '../../api/nominatim';
+import { NetworkError, RateLimitError, ServiceUnavailableError } from '../../utils/apiErrors';
 
 export const CheckoutForm = () => {
   const [inputValue, setInputValue] = useState('');
@@ -32,7 +33,15 @@ export const CheckoutForm = () => {
           setOptions([]);
         }
       } catch (err) {
-        setError('Сервис поиска адресов временно недоступен.');
+        if (err instanceof NetworkError) {
+          setError('Отсутствует подключение к интернету. Проверьте сеть и попробуйте снова.');
+        } else if (err instanceof RateLimitError) {
+          setError('Слишком много запросов. Пожалуйста, подождите немного.');
+        } else if (err instanceof ServiceUnavailableError) {
+          setError('Сервис поиска адресов временно недоступен. Повторите попытку позже.');
+        } else {
+          setError('Произошла непредвиденная ошибка при поиске адреса.');
+        }
         setOptions([]);
       } finally {
         setLoading(false);

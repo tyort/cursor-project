@@ -1,3 +1,5 @@
+import { fetchWithRetry } from '../utils/apiClient';
+
 /**
  * Выполняет геокодирование адреса через Nominatim API (OpenStreetMap).
  * Важно: API разрешает не более 1 запроса в секунду.
@@ -14,24 +16,31 @@ export const geocodeAddress = async (address) => {
   url.searchParams.append('q', address);
   url.searchParams.append('format', 'json');
 
-
   try {
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: {
-        'Accept-Language': 'ru-RU,ru;q=0.9',
-        'User-Agent': 'ai-project-app/1.0'
+    const data = await fetchWithRetry(
+      url.toString(),
+      {
+        method: 'GET',
+        headers: {
+          'Accept-Language': 'ru-RU,ru;q=0.9',
+          'User-Agent': 'ai-project-app/1.0'
+        }
+      },
+      {
+        retries: 2, // 2 повторные попытки (всего 3 запроса)
+        retryDelay: 1500, // задержка 1.5с (из-за лимита Nominatim)
+        cacheKey: `geocode_${address}`, // Кэширование запросов
+        cacheTTL: 1000 * 60 * 60 * 24 // 24 часа кэш
       }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Ошибка геокодирования: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    );
 
     return data;
   } catch (error) {
+    if (error.cachedData) {
+      console.warn('Использованы кэшированные данные для геокодирования из-за ошибки:', error.message);
+      return error.cachedData;
+    }
+    
     console.error('Ошибка при запросе к Nominatim API:', error.message || error);
     throw error;
   }
